@@ -17,33 +17,7 @@ An end-to-end data engineering, analytics, and machine learning platform built o
 
 ---
 
-## Platform Architecture
 
-```mermaid
-graph TD
-    classDef gcp fill:#4285F4,stroke:#333,stroke-width:1px,color:#fff;
-    classDef tool fill:#34A853,stroke:#333,stroke-width:1px,color:#fff;
-    classDef data fill:#FBBC05,stroke:#333,stroke-width:1px,color:#333;
-    
-    A[SEER Dataset CSV]:::data -->|bq load / Direct Upload| B[(raw.seer_breast_cancer)]:::gcp
-    B -->|ELT Staging SQL| C[(staging.seer_breast_cancer)]:::gcp
-    C -->|ELT Warehouse SQL| D[(warehouse.fact_patient_case & dims)]:::gcp
-    
-    D -->|Column Masking View| E[warehouse.v_patient_summary_analyst]:::gcp
-    D -->|BigQuery ML| F[Logistic Regression Model]:::gcp
-    
-    E -->|Connector| G[Looker Studio Dashboard]:::tool
-    
-    subgraph BigQuery Sandbox
-    B
-    C
-    D
-    E
-    F
-    end
-```
-
----
 
 ## Technical Stack
 - **Data Warehouse**: Google BigQuery (Sandbox Tier)
