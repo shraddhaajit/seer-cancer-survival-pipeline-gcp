@@ -1,0 +1,6 @@
+ajcc_6th_stage,total_patients,alive_patients,dead_patients,survival_rate_pct,avg_survival_months
+IIA,1305,1209,96,92.64,74.4
+IIB,1130,995,135,88.05,72.2
+IIIA,1050,866,184,82.48,70.2
+IIIB,67,47,20,70.15,69.4
+IIIC,472,291,181,61.65,63.2

@@ -77,5 +77,61 @@ Because this project runs in the BigQuery Sandbox tier, all datasets, tables, an
 
 ---
 
-## How to Verify
-Please refer to the [How to Verify](#how-to-verify-project-permanence) section in the `/proof` documentation or check the `/proof` folder directly. The queries can be re-run in any Google Cloud project using the SQL scripts in `/sql/`.
+## How to Verify (Project Permanence & Pipeline Execution Guide)
+
+Since this project resides within the free **BigQuery Sandbox**, its datasets and tables are subject to Google's automatic **60-day expiration policy**. To ensure that this work remains permanently demonstrable and easy to audit, we have archived all schemas, queries, metrics, and views.
+
+---
+
+### Phase 1: Review Archived Proofs (Static Record)
+You can inspect the project's output and structural validity directly within this repository:
+1. **Database Schemas**: Review [schemas.txt](file:///c:/Users/shrad/OneDrive/Desktop/adpproject/proof/schemas.txt) to verify the JSON definitions for raw, staging, and warehouse tables.
+2. **SQL Query Outputs**: Review [sample_query_results.md](file:///c:/Users/shrad/OneDrive/Desktop/adpproject/proof/sample_query_results.md) and [sample_query_results.csv](file:///c:/Users/shrad/OneDrive/Desktop/adpproject/proof/sample_query_results.csv) to inspect the exact outputs returned by the analytical SQL queries.
+3. **ML Evaluation**: Review [ml-notes.md](file:///c:/Users/shrad/OneDrive/Desktop/adpproject/docs/ml-notes.md) to inspect the trained logistic regression model's accuracy, recall, ROC AUC score, and confusion matrix.
+4. **Dashboard Views**: Open the [dashboard folder](file:///c:/Users/shrad/OneDrive/Desktop/adpproject/proof/dashboard/) to inspect the static exports of our Looker Studio dashboard.
+
+---
+
+### Phase 2: Re-Run the Pipeline (Active Verification)
+You can execute the entire pipeline from scratch in any Google Cloud project (Sandbox or billing-enabled) using the standard GCP SDK and our versioned SQL scripts.
+
+#### 1. Setup & Ingestion
+```powershell
+# Authenticate and set your GCP target project
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+
+# Create the raw layer and upload the SEER CSV
+bq mk --location=us --dataset raw
+bq load --autodetect --skip_leading_rows=1 --source_format=CSV raw.seer_breast_cancer ./data/raw/seer_breast_cancer_raw.csv
+```
+
+#### 2. Staging & Warehousing Transformations
+```powershell
+# Create staging dataset and run cleaning script
+bq mk --location=us --dataset staging
+Get-Content ./sql/transformations/staging.sql -Raw | bq query --use_legacy_sql=false
+
+# Create warehouse dataset and run star schema modeling
+bq mk --location=us --dataset warehouse
+Get-Content ./sql/transformations/warehouse.sql -Raw | bq query --use_legacy_sql=false
+```
+
+#### 3. Governance & Views
+```powershell
+# Create the de-identified Authorized View for analysts
+Get-Content ./sql/governance/authorized_views.sql -Raw | bq query --use_legacy_sql=false
+```
+
+#### 4. Analytics & Machine Learning
+```powershell
+# Execute core analytical queries
+Get-Content ./sql/analytics/business_queries.sql -Raw | bq query --use_legacy_sql=false
+
+# Train the BQML Logistic Regression Model
+Get-Content ./sql/ml/train_model.sql -Raw | bq query --use_legacy_sql=false
+
+# Evaluate the model and print the confusion matrix
+Get-Content ./sql/ml/evaluate_model.sql -Raw | bq query --use_legacy_sql=false
+```
+
