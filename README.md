@@ -2,9 +2,9 @@
 
 An end-to-end data engineering, analytics, and machine learning platform built on Google Cloud Platform, aligned with the **Associate Data Practitioner (ADP)** exam domains. This project demonstrates real-world clinical data pipelines, dimensional modeling, data governance, and predictive analytics using a de-identified public health dataset.
 
-> [!IMPORTANT]
-> **No-Billing Guardrail & Sandbox Constraints**
-> - **Free Tier Execution**: This project runs entirely within the **BigQuery Sandbox** environment. No Google Cloud billing account, credit card, or payment registration is required.
+> [!NOTE]
+> **BigQuery Sandbox Environment & Constraints**
+> - **Execution Environment**: This project is configured to run entirely within the **BigQuery Sandbox** tier.
 > - **60-Day Expiration Policy**: Because it uses BigQuery Sandbox, all tables, views, and datasets are subject to Google's standard 60-day automatic expiration limit from their creation date. This is an expected sandbox lifecycle constraint. The permanent record of the project (schemas, SQL codes, queries, and dashboard screenshots) is preserved in the `/proof` folder.
 
 ---
@@ -47,7 +47,7 @@ graph TD
 
 ## Technical Stack
 - **Data Warehouse**: Google BigQuery (Sandbox Tier)
-  * *Note: This project runs entirely within BigQuery Sandbox — no billing account or credit card required.*
+  * *Note: This project runs entirely within the BigQuery Sandbox environment.*
 - **Transformation Engine**: BigQuery Standard SQL (ELT Pattern)
 - **Data Governance**: Authorized Views (Least-Privilege clinical masking)
 - **Machine Learning**: BigQuery ML (BQML) - Logistic Regression
