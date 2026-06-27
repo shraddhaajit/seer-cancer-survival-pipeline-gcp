@@ -47,20 +47,35 @@ graph TD
 
 ## Technical Stack
 - **Data Warehouse**: Google BigQuery (Sandbox Tier)
+  * *Note: This project runs entirely within BigQuery Sandbox — no billing account or credit card required.*
 - **Transformation Engine**: BigQuery Standard SQL (ELT Pattern)
 - **Data Governance**: Authorized Views (Least-Privilege clinical masking)
 - **Machine Learning**: BigQuery ML (BQML) - Logistic Regression
-- **Visualization**: Looker Studio
+- **Visualization**: Looker Studio ([Live Dashboard Link](https://datastudio.google.com/reporting/958949e8-a4b9-44a6-b1fc-d76c0d8356d6))
+
+---
+
+## Data Pipeline Summary
+1. **Ingestion**: Raw SEER Breast Cancer CSV uploaded directly into the `raw` dataset.
+2. **Cleansing & Staging**: SQL transformations map and cast fields, standardize strings, and generate a surrogate clinical `patient_id` inside the `staging` dataset.
+3. **Data Modeling**: A normalized star schema created inside the `warehouse` dataset with dimension tables (`dim_race`, `dim_marital_status`, `dim_stage`, `dim_tumor_grade`) clustered to optimize query scans.
+4. **De-Identification View**: The authorized view `v_patient_summary_analyst` masks the sensitive `patient_id` column while exposing clinical facts for analysts and Looker Studio.
+5. **Predictive Analytics**: A BigQuery ML Logistic Regression model is trained on clinical and demographic indicators to predict patient survival outcomes.
 
 ---
 
 ## Project Structure
-- `/data/raw`: Raw input dataset (`seer_breast_cancer_raw.csv` is ignored in Git to comply with clinical data distribution patterns).
-- `/sql`: Standard, production-grade versioned SQL scripts categorized by stages (`transformations`, `governance`, `analytics`, `ml`).
-- `/docs`: Technical notes outlining engineering decisions (ELT choice, star schema modeling, sandbox substitutions, ML metrics).
-- `/proof`: Static records of schemas, query outputs, and dashboard views to ensure portfolio permanence beyond the 60-day sandbox lifecycle.
+- `/data/raw`: Raw input dataset (ignored in Git to comply with standard clinical data distribution).
+- `/sql`: Production-grade versioned SQL scripts categorized by stages (`transformations`, `governance`, `analytics`, `ml`).
+- `/docs`: Technical decisions (ELT, star schema modeling, sandbox substitutions, BQML evaluation).
+- `/proof`: Permanent files showing schemas, query outputs, and dashboard views.
+
+---
+
+## Sandbox Constraints & Lifecycle Policy
+Because this project runs in the BigQuery Sandbox tier, all datasets, tables, and views are subject to a **60-day expiration limit** from their creation date. To ensure this project remains demonstrable after the sandbox environment expires, a permanent record of schemas, ML metrics, and key query outputs is archived in the `/proof` folder.
 
 ---
 
 ## How to Verify
-Please refer to the "How to Verify this Project" section in the `/proof` documentation or the bottom of this file for instructions on verifying model metrics and outputs even if the sandbox environment has expired.
+Please refer to the [How to Verify](#how-to-verify-project-permanence) section in the `/proof` documentation or check the `/proof` folder directly. The queries can be re-run in any Google Cloud project using the SQL scripts in `/sql/`.
