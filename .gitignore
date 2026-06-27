@@ -1,0 +1,13 @@
+# BigQuery Sandbox Breast Cancer Survival Analytics Platform
+# Ignore actual dataset files to prevent versioning sensitive/PII data
+data/raw/*.csv
+
+# Temporary and system files
+.DS_Store
+Thumbs.db
+*.log
+.gemini/
+.idea/
+.vscode/
+venv/
+.env
